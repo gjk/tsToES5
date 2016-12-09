@@ -22,12 +22,12 @@ gulp.task('browserSync', function() {
     });
 
     //修改js，刷新页面
-    var watchScript = gulp.watch([paths.srcJs + '/**/*.ts'], ['ts', reload]);
+    var watchScript = gulp.watch([paths.srcJs + '/**/*.ts'], ['myts', reload]);
 
 });
 
-gulp.task('ts', function() {
-    return gulp.src([paths.srcJs + "/**/*.ts"])
+gulp.task('myts',['clean'],function() {
+    return gulp.src(["./src/js/**/*.ts"])
         .pipe(plugins.typescript({
             // outFile:'index.js', //输出文件名称
             //outDir:paths.distJs, //输出地址
@@ -49,13 +49,13 @@ gulp.task('ts', function() {
             // //rootDir:'' //输入目录，只使用这个目录
         }))
         .pipe(plugins.revEasy({ revType: 'hash', hashLength: 7 })) //添加版本号.
-        .pipe(gulp.dest('./dist/js'));
+        .pipe(gulp.dest(paths.distJs));
 });
 
 
 //并发
 gulp.task('runSequence', function() {
-    return runSequence(['clean'], ['ts'], ['browserSync']);
+    return runSequence(['clean'], ['myts'], ['browserSync']);
 });
 
 
@@ -65,5 +65,7 @@ gulp.task('clean', function() {
         [paths.dist]
     );
 });
+
+gulp.task('ts', ['myts']);
 
 gulp.task('default', ['runSequence']);
